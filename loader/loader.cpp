@@ -66,11 +66,7 @@ static EFI_STATUS GetExecutionFile(EFI_LOADED_IMAGE *li, CHAR16 * & fileName)
 
     if (EFI_SUCCESS != status)
     {
-/* Fallback if not found, skipped for now by HFE request
-        iniFile = getLoaderConfigFullPath();
-        status = ReadTextFile(li->DeviceHandle, iniFile, exeFile);
-        if (EFI_SUCCESS != status)
-*/
+// Fallback alternate Path if not found, skipped for now by HFE request
             StrCpy(exeFile, (const CHAR16*)DEFAULT_APP);
     }
 
@@ -163,6 +159,8 @@ extern "C" EFI_STATUS EFIAPI UefiMain(EFI_HANDLE ImageHandle, EFI_SYSTEM_TABLE *
             status = EFI_NOT_FOUND;
         }
 
+        if (fileName)
+            FreePool(fileName);
     }
 
 

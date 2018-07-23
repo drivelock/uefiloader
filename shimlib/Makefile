@@ -4,7 +4,7 @@ OBJCOPY		= $(CROSS_COMPILE)objcopy
 
 ARCH		= x86_64
 
-UDK		?= /media/psf/Projects/linux/UDK2015/Build/Include
+UDK		?= ../../UDK2015
 UDKINC		:= -I$(UDK)/MdePkg/Include -I$(UDK)/MdeModulePkg/Include -I$(UDK)/IntelFrameworkPkg/Include -I$(UDK)/IntelFrameworkModulePkg/Include -I$(UDK)/CryptoPkg/Include -I$(UDK)/MdePkg/Include/X64
 
 CFLAGS		= -Os -fno-stack-protector -fno-strict-aliasing \

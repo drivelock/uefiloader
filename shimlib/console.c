@@ -13,7 +13,8 @@
 #include <Library/PrintLib.h>
 #include <Protocol/SimpleTextOut.h>
 
-#include "shim.h"
+extern const CHAR16 * UefiErrorCompanyProductName; // used to print the red error boxes
+#include "ShimUtil.h"
 #include "console.h"
 
 

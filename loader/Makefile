@@ -4,10 +4,14 @@ OBJCOPY		= $(CROSS_COMPILE)objcopy
 
 ARCH		= x86_64
 
-UDK		?= /media/psf/Projects/linux/UDK2015/Build/Include
+UDK		?= ../../UDK2015
+UDKTOOLS	:= $(UDK)/BaseTools
+UDKBIN		:= $(UDKTOOLS)/BinWrappers/PosixLike
+# alternative :
+#UDKBIN		:= $(UDKTOOLS)/Source/C/bin
+UDKLIB		:= $(UDK)/Build/Release64
+
 UDKINC		:= -I$(UDK)/MdePkg/Include -I$(UDK)/MdeModulePkg/Include -I$(UDK)/IntelFrameworkPkg/Include -I$(UDK)/IntelFrameworkModulePkg/Include -I$(UDK)/CryptoPkg/Include -I$(UDK)/MdePkg/Include/X64
-UDKLIBBASE	?= /media/psf/Projects/linux/UDK2015/Build
-UDKLIB		:= $(UDKLIBBASE)/Release64
 UDKLIBS		= --start-group $(UDKLIB)/BasePeCoffLib.lib $(UDKLIB)/PeCoffExtraActionLibNull.lib $(UDKLIB)/BaseCacheMaintenanceLib.lib $(UDKLIB)/BaseIntrinsicLib.lib
 UDKLIBS		+= $(UDKLIB)/OpenSslLib.lib $(UDKLIB)/BaseCryptLib.lib $(UDKLIB)/UefiLib.lib $(UDKLIB)/BaseLib.lib $(UDKLIB)/BaseMemoryLib.lib $(UDKLIB)/BasePrintLib.lib
 UDKLIBS		+= $(UDKLIB)/UefiMemoryAllocationLib.lib $(UDKLIB)/UefiDevicePathLib.lib $(UDKLIB)/UefiBootServicesTableLib.lib $(UDKLIB)/UefiRuntimeServicesTableLib.lib
@@ -31,7 +35,7 @@ CFLAGS		+= -I../sharedInclude
 CXXFLAGS	:= $(CFLAGS) -fno-rtti -fno-exceptions
 
 LDFLAGS		= -s -nostdlib -n -q --gc-sections -melf_x86_64 --oformat=elf64-x86-64
-LDFLAGS		+= -z common-page-size=0x40 --script=GccBase.lds --defsym=PECOFF_HEADER_SIZE=0x228
+LDFLAGS		+= -z common-page-size=0x40 --script=$(UDKTOOLS)/Scripts/GccBase.lds --defsym=PECOFF_HEADER_SIZE=0x228
 LDFLAGS		+= --entry UefiMain -u UefiMain
 
 VERSION		= 0.8
@@ -49,14 +53,14 @@ bootX64.so: $(OBJS) ../shimlib/shimlib.a
 	$(MAKE) -C ../shimlib
 
 %.efi: %.so
-	./GenFw -e UEFI_APPLICATION -o $@.tmp $^
-	./GenFw -v -z -r $@.tmp
-	./GenFw -v -s NOW -o $@ $@.tmp
+	$(UDKBIN)/GenFw -e UEFI_APPLICATION -o $@.tmp $^
+	$(UDKBIN)/GenFw -v -z -r $@.tmp
+	$(UDKBIN)/GenFw -v -s NOW -o $@ $@.tmp
 
 clean:
 	$(MAKE) -C ../shimlib clean
 	rm -rf $(TARGET) $(OBJS)
-	rm -f *.so *.efi *.tar.* *.map *.efi.tmp
+	rm -f *.so *.efi *.tar.* *.map *.efi.tmp $(basename $(TARGET)).txt
 
 GITTAG = $(VERSION)
 
@@ -83,3 +87,5 @@ archive: tag
 	@dir=$$PWD; cd /tmp; tar -c --bzip2 -f $$dir/shim-$(VERSION).tar.bz2 shim-$(VERSION)
 	@rm -rf /tmp/shim-$(VERSION)
 	@echo "The archive is in shim-$(VERSION).tar.bz2"
+
+export UDK

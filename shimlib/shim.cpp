@@ -920,7 +920,7 @@ static EFI_STATUS generate_path(EFI_DEVICE_PATH *devpath, const CHAR16 *ImagePat
 
     StrCat(*PathName, ImagePath);
 
-    // Does fole exsit ?
+    // Does file exsit ?
     efi_status = GetBootServices()->OpenProtocol(VolumeDeviceHandle, &FsGuid, (VOID **) &FileSystem, GetImageHandle(), 0, EFI_OPEN_PROTOCOL_BY_HANDLE_PROTOCOL);
     if (efi_status == EFI_SUCCESS)
     {
@@ -1375,16 +1375,12 @@ static EFI_STATUS run_module(EFI_HANDLE image_handle, EFI_HANDLE volumeDeviceHan
     return efi_status;
 }
 
-extern "C" void* __ImageBase;
-
 
 // The one and only Function of the Shim Loader Library
 // but it's just a wrapper around the more or less original Shim Loader function "init_grub" (renamed to run_module for better understanding)
 extern "C" EFI_STATUS ExecuteFile(EFI_HANDLE volumeDeviceHandle, const CHAR16 *fileName, EFI_STATUS *executableResult, const char * VerifyModuleId)
 {
     FUNCTION(ExecuteFile);
-Print((const CHAR16*)L"Beaking to Debugger\nImageBase: %p\nIn WinDbg type: .reload /f bootx64=%Ix\n", &__ImageBase, &__ImageBase);
-CpuBreakpoint();
 
     if ((0 == volumeDeviceHandle) || (0 == fileName) || (0 == executableResult))
     {

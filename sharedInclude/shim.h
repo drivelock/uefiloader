@@ -19,9 +19,11 @@
 
 
 
+extern "C" {
 #include <Uefi.h>
 #include <Library/UefiRuntimeServicesTableLib.h>
 #include <Library/UefiBootServicesTableLib.h>
+}
 #define GetBootServices()       gBS
 #define GetRuntimeServices()    gRT
 #define GetImageHandle()        gImageHandle
