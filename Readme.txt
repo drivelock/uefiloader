@@ -2,14 +2,15 @@
 Setup UDK:
 1. Download and extract UDK 2015 from https://github.com/tianocore/tianocore.github.io/wiki/UDK2015
 
-2. Extract the contained UDK2015.MyWorkSpace.zip to your favorite location (beware that Network Folders don't seem to work).
+2. Extract the contained UDK2015.MyWorkSpace.zip to your favorite location (do not use a network folder).
 
-3. (Optional) rename the extracted folder (MyWorkSpace) to "UDK2015". Our Makefiles assume it to be there, but it's changable.
+3. (Optional) rename the extracted folder (MyWorkSpace) to "UDK2015". Our Makefiles assume it to be there (can be modified).
 
 4.  Follow the UDK Documentation "UDK2015-ReleaseNotes-MyWorkSpace.txt" (extracted at 1.) to setup (do not build yet) the UDK.
 4a. This Documentations also refers to online docs (e.g. https://github.com/tianocore/tianocore.github.io/wiki/Using-EDK-II-with-Native-GCC#Ubuntu_1604_LTS__Ubuntu_1610).
 4b. Be sure to patch OpenSSL as described with http://www.openssl.org/source/openssl-1.0.2d.tar.gz
-4c. Versions of UDK required packages we installed:
+4c. Versions of UDK required packages installed:
+
     build-essential:    12.1ubuntu2
     uuid-dev:           2.27.1-6ubuntu3.4
     iasl:               20160108-2
@@ -19,7 +20,7 @@ Setup UDK:
 
 5. After initializing the build environment ". edksetup.sh BaseTools" and before starting the build you have to modify "Conf/target.txt":
 	(see 5b.):	ACTIVE_PLATFORM =
-    TARGET = RELEASE
+	TARGET = RELEASE
 	TARGET_ARCH = X64
 	TOOL_CHAIN_TAG = GCC49
 5b. choose to either set ACTIVE_PLATFORM to nothing and start build from each of the following folders/packages (e.g. "cd MdePkg" & "build")
@@ -28,6 +29,7 @@ Setup UDK:
 5c. Build follwoing packages ("build" will be sufficient no need for the "-t GCC49" option)
     MdePkg/MdePkg.dsc
     CryptoPkg/CryptoPkg.dsc
+
 
 Build UefiBootLoader:
 1. Extract the workspace to your favorite location (this should create the subfolder "UefiBootLoader")
