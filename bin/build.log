@@ -1,0 +1,36 @@
+make -C ../shimlib clean
+make[1]: Entering directory '/media/psf/Projects/UefiBootLoader/shimlib'
+rm -f shimlib.a shim.o ShimUtil.o console.o guid.o
+make[1]: Leaving directory '/media/psf/Projects/UefiBootLoader/shimlib'
+rm -rf bootX64.efi loader.o AutoGen.o
+rm -f *.so *.efi *.tar.* *.map *.efi.tmp bootX64.txt
+g++ -Os -fno-stack-protector -fno-strict-aliasing -fshort-wchar -Wall -Wsign-compare -Werror -fno-builtin -Werror=sign-compare -Wno-array-bounds -ffunction-sections -fdata-sections -fno-asynchronous-unwind-tables -Wno-address -Wno-unused-but-set-variable -DNO_BUILTIN_VA_FUNCS "-DEFIAPI=__attribute__((ms_abi))" -mcmodel=large -I../../UDK2015/MdePkg/Include -I../../UDK2015/MdePkg/Include/X64 -mno-mmx -mno-sse -mno-red-zone -nostdinc -maccumulate-outgoing-args -m64 -I../sharedInclude -fno-rtti -fno-exceptions   -c -o loader.o loader.cpp
+gcc -Os -fno-stack-protector -fno-strict-aliasing -fshort-wchar -Wall -Wsign-compare -Werror -fno-builtin -Werror=sign-compare -Wno-array-bounds -ffunction-sections -fdata-sections -fno-asynchronous-unwind-tables -Wno-address -Wno-unused-but-set-variable -DNO_BUILTIN_VA_FUNCS "-DEFIAPI=__attribute__((ms_abi))" -mcmodel=large -I../../UDK2015/MdePkg/Include -I../../UDK2015/MdePkg/Include/X64 -mno-mmx -mno-sse -mno-red-zone -nostdinc -maccumulate-outgoing-args -m64 -I../sharedInclude   -c -o AutoGen.o AutoGen.c
+make -C ../shimlib
+make[1]: Entering directory '/media/psf/Projects/UefiBootLoader/shimlib'
+g++ -Os -fno-stack-protector -fno-strict-aliasing -fshort-wchar -Wall -Wsign-compare -Werror -fno-builtin -Werror=sign-compare -Wno-array-bounds -ffunction-sections -fdata-sections -fno-asynchronous-unwind-tables -Wno-address -Wno-unused-but-set-variable -DNO_BUILTIN_VA_FUNCS "-DEFIAPI=__attribute__((ms_abi))" -mcmodel=large -I../../UDK2015/MdePkg/Include -I../../UDK2015/CryptoPkg/Include -I../../UDK2015/MdePkg/Include/X64 -mno-mmx -mno-sse -mno-red-zone -nostdinc -maccumulate-outgoing-args -m64 -I../sharedInclude -fno-rtti -fno-exceptions   -c -o shim.o shim.cpp
+g++ -Os -fno-stack-protector -fno-strict-aliasing -fshort-wchar -Wall -Wsign-compare -Werror -fno-builtin -Werror=sign-compare -Wno-array-bounds -ffunction-sections -fdata-sections -fno-asynchronous-unwind-tables -Wno-address -Wno-unused-but-set-variable -DNO_BUILTIN_VA_FUNCS "-DEFIAPI=__attribute__((ms_abi))" -mcmodel=large -I../../UDK2015/MdePkg/Include -I../../UDK2015/CryptoPkg/Include -I../../UDK2015/MdePkg/Include/X64 -mno-mmx -mno-sse -mno-red-zone -nostdinc -maccumulate-outgoing-args -m64 -I../sharedInclude -fno-rtti -fno-exceptions   -c -o ShimUtil.o ShimUtil.cpp
+gcc -Os -fno-stack-protector -fno-strict-aliasing -fshort-wchar -Wall -Wsign-compare -Werror -fno-builtin -Werror=sign-compare -Wno-array-bounds -ffunction-sections -fdata-sections -fno-asynchronous-unwind-tables -Wno-address -Wno-unused-but-set-variable -DNO_BUILTIN_VA_FUNCS "-DEFIAPI=__attribute__((ms_abi))" -mcmodel=large -I../../UDK2015/MdePkg/Include -I../../UDK2015/CryptoPkg/Include -I../../UDK2015/MdePkg/Include/X64 -mno-mmx -mno-sse -mno-red-zone -nostdinc -maccumulate-outgoing-args -m64 -I../sharedInclude   -c -o console.o console.c
+gcc -Os -fno-stack-protector -fno-strict-aliasing -fshort-wchar -Wall -Wsign-compare -Werror -fno-builtin -Werror=sign-compare -Wno-array-bounds -ffunction-sections -fdata-sections -fno-asynchronous-unwind-tables -Wno-address -Wno-unused-but-set-variable -DNO_BUILTIN_VA_FUNCS "-DEFIAPI=__attribute__((ms_abi))" -mcmodel=large -I../../UDK2015/MdePkg/Include -I../../UDK2015/CryptoPkg/Include -I../../UDK2015/MdePkg/Include/X64 -mno-mmx -mno-sse -mno-red-zone -nostdinc -maccumulate-outgoing-args -m64 -I../sharedInclude   -c -o guid.o guid.c
+ar rcs shimlib.a shim.o ShimUtil.o console.o guid.o
+make[1]: Leaving directory '/media/psf/Projects/UefiBootLoader/shimlib'
+ld -o bootX64.so -s -nostdlib -n -q --gc-sections -melf_x86_64 --oformat=elf64-x86-64 -z common-page-size=0x40 --script=../../UDK2015/BaseTools/Scripts/GccBase.lds --defsym=PECOFF_HEADER_SIZE=0x228 --entry UefiMain -u UefiMain -Map bootX64.map loader.o AutoGen.o ../shimlib/shimlib.a --start-group ../../UDK2015/Build/Release64/BasePeCoffLib.lib ../../UDK2015/Build/Release64/PeCoffExtraActionLibNull.lib ../../UDK2015/Build/Release64/BaseCacheMaintenanceLib.lib ../../UDK2015/Build/Release64/BaseIntrinsicLib.lib ../../UDK2015/Build/Release64/OpenSslLib.lib ../../UDK2015/Build/Release64/BaseCryptLib.lib ../../UDK2015/Build/Release64/UefiLib.lib ../../UDK2015/Build/Release64/BaseLib.lib ../../UDK2015/Build/Release64/BaseMemoryLib.lib ../../UDK2015/Build/Release64/BasePrintLib.lib ../../UDK2015/Build/Release64/UefiMemoryAllocationLib.lib ../../UDK2015/Build/Release64/UefiDevicePathLib.lib ../../UDK2015/Build/Release64/UefiBootServicesTableLib.lib ../../UDK2015/Build/Release64/UefiRuntimeServicesTableLib.lib ../../UDK2015/Build/Release64/BaseDebugLibNull.lib --end-group
+../../UDK2015/BaseTools/BinWrappers/PosixLike/GenFw -e UEFI_APPLICATION -o bootX64.efi.tmp bootX64.so
+../../UDK2015/BaseTools/BinWrappers/PosixLike/GenFw -v -z -r bootX64.efi.tmp
+Verbose output Mode Set!
+GenFw tool start.
+the input file name is bootX64.efi.tmp
+Zero the Debug Data Fields and Time Stamp in input PE image.
+Overwrite the input file with the output content.
+the size of output file is 602752 bytes
+the size of output file is 602752 bytes
+GenFw tool done with return code is 0x0.
+../../UDK2015/BaseTools/BinWrappers/PosixLike/GenFw -v -s NOW -o bootX64.efi bootX64.efi.tmp
+Verbose output Mode Set!
+GenFw tool start.
+the input file name is bootX64.efi.tmp
+Set new time stamp NOW in the input PE image.
+Output file name is bootX64.efi
+the size of output file is 602752 bytes
+the size of output file is 602752 bytes
+GenFw tool done with return code is 0x0.
