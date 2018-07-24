@@ -11,7 +11,7 @@ UDKBIN		:= $(UDKTOOLS)/BinWrappers/PosixLike
 #UDKBIN		:= $(UDKTOOLS)/Source/C/bin
 UDKLIB		:= $(UDK)/Build/Release64
 
-UDKINC		:= -I$(UDK)/MdePkg/Include -I$(UDK)/MdeModulePkg/Include -I$(UDK)/IntelFrameworkPkg/Include -I$(UDK)/IntelFrameworkModulePkg/Include -I$(UDK)/CryptoPkg/Include -I$(UDK)/MdePkg/Include/X64
+UDKINC		:= -I$(UDK)/MdePkg/Include -I$(UDK)/MdePkg/Include/X64
 UDKLIBS		= --start-group $(UDKLIB)/BasePeCoffLib.lib $(UDKLIB)/PeCoffExtraActionLibNull.lib $(UDKLIB)/BaseCacheMaintenanceLib.lib $(UDKLIB)/BaseIntrinsicLib.lib
 UDKLIBS		+= $(UDKLIB)/OpenSslLib.lib $(UDKLIB)/BaseCryptLib.lib $(UDKLIB)/UefiLib.lib $(UDKLIB)/BaseLib.lib $(UDKLIB)/BaseMemoryLib.lib $(UDKLIB)/BasePrintLib.lib
 UDKLIBS		+= $(UDKLIB)/UefiMemoryAllocationLib.lib $(UDKLIB)/UefiDevicePathLib.lib $(UDKLIB)/UefiBootServicesTableLib.lib $(UDKLIB)/UefiRuntimeServicesTableLib.lib

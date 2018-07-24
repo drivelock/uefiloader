@@ -5,7 +5,7 @@ OBJCOPY		= $(CROSS_COMPILE)objcopy
 ARCH		= x86_64
 
 UDK		?= ../../UDK2015
-UDKINC		:= -I$(UDK)/MdePkg/Include -I$(UDK)/MdeModulePkg/Include -I$(UDK)/IntelFrameworkPkg/Include -I$(UDK)/IntelFrameworkModulePkg/Include -I$(UDK)/CryptoPkg/Include -I$(UDK)/MdePkg/Include/X64
+UDKINC		:= -I$(UDK)/MdePkg/Include -I$(UDK)/CryptoPkg/Include -I$(UDK)/MdePkg/Include/X64
 
 CFLAGS		= -Os -fno-stack-protector -fno-strict-aliasing \
 		  -fshort-wchar -Wall -Wsign-compare -Werror -fno-builtin \

@@ -930,7 +930,8 @@ static EFI_STATUS generate_path(EFI_DEVICE_PATH *devpath, const CHAR16 *ImagePat
         {
             EFI_FILE_PROTOCOL *File = 0;
             efi_status = root->Open(root, &File, *PathName, EFI_FILE_MODE_READ, 0);
-            (void) File->Close(File);
+            if (efi_status == EFI_SUCCESS)
+                (void) File->Close(File);
             (void) root->Close(root);
         }
     }
