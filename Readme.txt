@@ -26,7 +26,7 @@ Setup UDK:
 5b. choose to either set ACTIVE_PLATFORM to nothing and start build from each of the following folders/packages (e.g. "cd MdePkg" & "build")
     or set ACTIVE_PLATFORM to these packages one by one and start build for each from main folder
     (e.g. in target.txt: "ACTIVE_PLATFORM = MdePkg/MdePkg.dsc" & "build")
-5c. Build follwoing packages ("build" will be sufficient no need for the "-t GCC49" option)
+5c. Build following packages ("build" will be sufficient no need for the "-t GCC49" option)
     MdePkg/MdePkg.dsc
     CryptoPkg/CryptoPkg.dsc
 
@@ -36,9 +36,9 @@ Build UefiBootLoader:
    Preferred: "UDK2015" and "UefiBootLoader" shall reside in the same folder (Makefiles are configured for this)
 
 2. collect used UDK libraries in one folder (manually or by "UefiBootLoader/collectUDKLibs.sh")
-   Makefile assumes it to be in the UDK "Build" folder named "Release" (e.g. UDK2015/Build/Release64)
+   Makefile assumes it to be in the UDK "Build" folder named "Release64" (e.g. UDK2015/Build/Release64)
 
-3. If neccessary modify following variables in "UefiBootLoader/loader/Makefile":
+3. If necessary modify following variables in "UefiBootLoader/loader/Makefile":
     UDK         ?= ../../UDK2015
     (if you installed the UDK elsewhere)
 
@@ -54,4 +54,4 @@ Build UefiBootLoader:
     cd UefiBootLoader/loader
     make clean all
 
-Our precomiled version is "UefiBootLoader/bin/bootX64.efi"
+Our precompiled version is "UefiBootLoader/bin/bootX64.efi"
