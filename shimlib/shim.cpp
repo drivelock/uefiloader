@@ -956,24 +956,6 @@ static EFI_STATUS create_imagehandle(EFI_HANDLE image_handle, EFI_LOADED_IMAGE *
     FUNCTION(create_imagehandle);
 
     EFI_STATUS  efi_status;
-#ifdef CREATE_LI_BY_SELF
-    *new_li = (EFI_LOADED_IMAGE *) AllocatePool(sizeof(EFI_LOADED_IMAGE));
-    if (0 == *new_li)
-    {
-		efi_status = EFI_OUT_OF_RESOURCES;
-        SGMError((SGMT_MAJOR, (unsigned long)efi_status, L"Unable to allocate LoadedImageProtocol buffer"));
-        return efi_status;
-	}
-
-    // create Loaded Image struct from our own
-    memcpy(*new_li, org_li, sizeof(EFI_LOADED_IMAGE));
-    (*new_li)->DeviceHandle = volumeDeviceHandle;
-    (*new_li)->Unload = 0;
-    (*new_li)->FilePath = 0;
-    (*new_li)->LoadOptions = 0;
-
-    // Handle has to be created after loading, so postponed into run_module
-#else
 	EFI_DEVICE_PATH * FilePath = NULL;
 
 	FilePath = FileDevicePath(org_li->DeviceHandle, (CHAR16*)getLoaderBinaryFullPath());
@@ -1024,7 +1006,6 @@ static EFI_STATUS create_imagehandle(EFI_HANDLE image_handle, EFI_LOADED_IMAGE *
 	 */
 	CopyMem(new_li_bak, *new_li, sizeof(EFI_LOADED_IMAGE));
     (*new_li)->LoadOptions = 0; // copy from out image, if any
-#endif
     // MBA: just copy the LoadOptions from our original
     // TODO by Component Owner: is this useful ? whats in there ?
     if (0 < (*new_li)->LoadOptionsSize)
@@ -1076,13 +1057,9 @@ static EFI_STATUS create_imagehandle(EFI_HANDLE image_handle, EFI_LOADED_IMAGE *
         if (0 != (*new_li)->LoadOptions)
             GetBootServices()->FreePool((*new_li)->LoadOptions);
 
-#ifdef CREATE_LI_BY_SELF
-        FreePool(*new_li);
-#else
     	CopyMem(*new_li, new_li_bak, sizeof(EFI_LOADED_IMAGE)); // restore orignal image data from Backup
         (void) GetBootServices()->CloseProtocol(*new_handle, &loaded_image_protocol, image_handle, 0);
         GetBootServices()->UnloadImage(*new_handle);
-#endif
         return efi_status;
     }
 
@@ -1293,65 +1270,20 @@ static EFI_STATUS run_module(EFI_HANDLE image_handle, EFI_HANDLE volumeDeviceHan
         if (0 != new_li->LoadOptions)
             FreePool(new_li->LoadOptions);
 
-#ifdef CREATE_LI_BY_SELF
-        if (0 != new_li->FilePath)
-            FreePool(new_li->FilePath);
-        FreePool(new_li);
-#else
     	CopyMem(new_li, &new_li_bak, sizeof(EFI_LOADED_IMAGE)); // restore orignal image data from Backup
         (void) GetBootServices()->CloseProtocol(new_ImageHandle, &loaded_image_protocol, image_handle, 0);
         GetBootServices()->UnloadImage(new_ImageHandle);
-#endif
 
 		return efi_status;
 	}
 
-#ifdef CREATE_LI_BY_SELF
-    // final step we need to do here
-    // MBA: UEFI spec says: if Handle is 0 a new Handle will be created
-    efi_status = GetBootServices()->InstallProtocolInterface(&new_ImageHandle, &loaded_image_protocol, EFI_NATIVE_INTERFACE, new_li);
-    if ( (efi_status != EFI_SUCCESS) || (0 == new_ImageHandle) )
-    {
-        SGMError((SGMT_MAJOR, (unsigned long)efi_status, L"Unable to install new LoadedImageProtocol"));
 
-        GetBootServices()->FreePages(new_li->ImageBase, static_cast<UINTN>(EFI_SIZE_TO_PAGES(new_li->ImageSize)));
-
-        if (0 != new_li->LoadOptions)
-            FreePool(new_li->LoadOptions);
-
-        if (0 != new_li->FilePath)
-            FreePool(new_li->FilePath);
-        FreePool(new_li);
-
-        return efi_status;
-	}
-#endif
 
     // now call the module
 	*executableResult = entry_point(new_ImageHandle, GetSystemTable());
 
     if (!isDriver || *executableResult != EFI_SUCCESS)
     {
-#ifdef CREATE_LI_BY_SELF
-        // MBA: UEFI Spec says: Handle is freed if last Protocol is uninstalled
-        efi_status = GetBootServices()->UninstallProtocolInterface(new_ImageHandle, &loaded_image_protocol, new_li);
-        if (EFI_SUCCESS == efi_status)
-        {
-            // free all the data
-            GetBootServices()->FreePages((UINT64)new_li->ImageBase, EFI_SIZE_TO_PAGES(new_li->ImageSize));
-            if (0 != new_li->FilePath)
-                FreePool(new_li->FilePath);
-            if (new_li->LoadOptions)
-                FreePool(new_li->LoadOptions);
-            FreePool(new_li);
-        }
-        else
-        {
-            // else: we could not uninstall the LoadedImage protocol so we keep all that memory so nobody can access invalid memory
-            // TODO by Component Owner: do so or free in any case ?
-            SGMError((SGMT_MAJOR, (unsigned long)efi_status, L"Failed to uninstall protocol, memory not released"));
-        }
-#else
         GetBootServices()->FreePages((UINT64)new_li->ImageBase, (UINTN) EFI_SIZE_TO_PAGES(new_li->ImageSize));
         if (0 != new_li->FilePath)
             FreePool(new_li->FilePath);
@@ -1361,7 +1293,6 @@ static EFI_STATUS run_module(EFI_HANDLE image_handle, EFI_HANDLE volumeDeviceHan
     	CopyMem(new_li, &new_li_bak, sizeof(EFI_LOADED_IMAGE)); // restore orignal image data from Backup
         (void) GetBootServices()->CloseProtocol(new_ImageHandle, &loaded_image_protocol, image_handle, 0);
         GetBootServices()->UnloadImage(new_ImageHandle);
-#endif
     }
     else // driver
     {
